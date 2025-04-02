@@ -4,6 +4,8 @@ Copyright (c) 2013-2024 The EmbroiderModder Team
 
 https://www.libembroidery.org
 
+[![Test build](https://github.com/Embroidermodder/libembroidery/actions/workflows/build.yml/badge.svg)](https://github.com/Embroidermodder/libembroidery/actions/workflows/build.yml)
+
 (Under construction, please wait for v1.0 release.)
 
 Libembroidery is a low-level library for reading, writing, 

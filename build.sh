@@ -76,26 +76,26 @@ function all_tests () {
 
 function test_full () {
 
-    date &> test_full.log
-    test_build &>> test_full.log
-    time all_tests &>> test_full.log
+    date
+    test_build
+    time all_tests
 
 }
 
 function test_main () {
 
-    date &> test.log
-    test_build &>> test.log
-    time fast_tests &>> test.log
+    date
+    test_build
+    time fast_tests
 
 }
 
 function cmake_build () {
 
-    mkdir -f build &> build.log
-    cd build &>> build.log
-    cmake .. &>> build.log
-    cmake --build . &>> build.log
+    mkdir -f build
+    cd build
+    cmake ..
+    cmake --build .
 
 }
 

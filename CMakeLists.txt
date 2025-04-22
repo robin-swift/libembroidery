@@ -33,6 +33,7 @@ set(LIBRARY_SRC
 	src/script.c
 	src/testing.c
 	src/data.c
+	src/designs.c
 	src/embroidery.h
 
 	extern/mpc/mpc.c
@@ -49,6 +50,8 @@ endif()
 
 if(EMBROIDERY_BUILD_CLI)
 add_executable(embroider src/embroider.c)
+
+target_link_libraries(embroider PRIVATE embroidery_static)
 
 if (WIN32)
 else (WIN32)

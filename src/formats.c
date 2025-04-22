@@ -878,16 +878,18 @@ write10o(EmbPattern *pattern, FILE* file)
  * We don't know much about this format. \todo Find a source.
  */
 char
-readArt(EmbPattern * pattern, FILE* file)
+readArt(EmbPattern *pattern, FILE* file)
 {
-    puts("ERROR: readArt is not supported.");
+    puts("ERROR: readArt is not supported yet.");
+    printf("Cannot read %p %p\n", pattern, file);
     return 0;
 }
 
 char
 writeArt(EmbPattern * pattern, FILE* file)
 {
-    puts("ERROR: writeArt is not supported.");
+    puts("ERROR: writeArt is not supported yet.");
+    printf("Cannot write %p %p\n", pattern, file);
     return 0;
 }
 
@@ -899,6 +901,7 @@ char
 readBmc(EmbPattern* pattern , FILE* file)
 {
     puts("ERROR: readBmc is not supported.");
+    printf("Cannot read %p %p\n", pattern, file);
     return 0; /*TODO: finish readBmc */
 }
 
@@ -906,6 +909,7 @@ char
 writeBmc(EmbPattern* pattern , FILE* file)
 {
     puts("writeBmc is not implemented");
+    printf("Cannot write %p %p\n", pattern, file);
     return 0; /*TODO: finish writeBmc */
 }
 
@@ -971,6 +975,7 @@ char
 writeBro(EmbPattern* pattern , FILE* file)
 {
     puts("writeBro is not implemented");
+    printf("Cannot write %p %p\n", pattern, file);
     return 0; /*TODO: finish writeBro */
 }
 
@@ -986,6 +991,7 @@ char
 readCnd(EmbPattern* pattern , FILE* file)
 {
     puts("readCnd is not implemented");
+    printf("Cannot read %p %p\n", pattern, file);
     return 0; /*TODO: finish readCnd */
 }
 
@@ -993,6 +999,7 @@ char
 writeCnd(EmbPattern* pattern , FILE* file)
 {
     puts("writeCnd is not implemented");
+    printf("Cannot write %p %p\n", pattern, file);
     return 0; /*TODO: finish writeCnd */
 }
 
@@ -2258,6 +2265,7 @@ readDxf(EmbPattern* pattern, FILE* file)
     pos.y = 0.0f;
     prev.x = 0.0f;
     prev.y = 0.0f;
+    printf("%f %f %f\n", prev.x, pos.x, first.x);
 
     puts("overriding dxf. Unimplemented for now.");
     puts("Overridden, defaulting to dst.");
@@ -2559,6 +2567,7 @@ emdDecode(unsigned char inputByte)
     return inputByte;
 }
 
+/* . */
 char
 readEmd(EmbPattern* pattern, FILE* file)
 {
@@ -2781,6 +2790,7 @@ char
 readEys(EmbPattern* pattern , FILE* file)
 {
     puts("ERROR: readEys and not been finished.");
+    printf("%p %p\n", pattern, file);
     return 0; /*TODO: finish readEys */
 }
 
@@ -2788,6 +2798,7 @@ char
 writeEys(EmbPattern* pattern , FILE* file)
 {
     puts("ERROR: writeEys and not been finished.");
+    printf("%p %p\n", pattern, file);
     return 0; /*TODO: finish writeEys */
 }
 
@@ -2829,7 +2840,7 @@ char
 writeFxy(EmbPattern* pattern, FILE* file)
 {
     puts("Overridden, defaulting to dst.");
-    writeDst(pattern, file);
+    printf("%p %p\n", pattern, file);
     return 0; /*TODO: finish writeFxy */
 }
 
@@ -2845,6 +2856,7 @@ char
 readGc(EmbPattern* pattern , FILE* file)
 {
     puts("ERROR: readGc and not been finished.");
+    printf("%p %p\n", pattern, file);
     return 0; /*TODO: finish readGc */
 }
 
@@ -2852,6 +2864,7 @@ char
 writeGc(EmbPattern* pattern , FILE* file)
 {
     puts("ERROR: writeGc and not been finished.");
+    printf("%p %p\n", pattern, file);
     return 0; /*TODO: finish writeGc */
 }
 
@@ -2864,6 +2877,7 @@ char
 readGnc(EmbPattern* pattern , FILE* file)
 {
     puts("ERROR: readGnc and not been finished.");
+    printf("%p %p\n", pattern, file);
     return 0;
 }
 
@@ -2872,6 +2886,7 @@ char
 writeGnc(EmbPattern* pattern , FILE* file)
 {
     puts("ERROR: writeGnc and not been finished.");
+    printf("%p %p\n", pattern, file);
     return 0;
 }
 
@@ -2916,8 +2931,8 @@ readGt(EmbPattern* pattern, FILE* file)
 char
 writeGt(EmbPattern* pattern, FILE* file)
 {
-    puts("Overridden, defaulting to dst.");
-    writeDst(pattern, file);
+    puts("ERROR: gt not supported in write mode.");
+    printf("%p %p\n", pattern, file);
     return 0; /*TODO: finish writeGt */
 }
 
@@ -3010,9 +3025,6 @@ readHus(EmbPattern* pattern, FILE* file)
     unsigned char* stringVal = 0;
 
     int unknown, i = 0;
-
-    puts("ERROR: Overridden. readHus is not implemented for now.");
-    return 0;
 
     fseek(file, 0x00, SEEK_END);
     fileLength = ftell(file);
@@ -5302,7 +5314,7 @@ void
 pesWriteEmbOneSection(EmbPattern* pattern, FILE* file)
 {
     /* TODO: pointer safety */
-    float x, width, height;
+    //float x, width, height;
     int hoopHeight = 1800, hoopWidth = 1300;
     EmbRect bounds;
     emb_write_i16(file, 0x07); /* string length */
@@ -8381,7 +8393,7 @@ readVp3(EmbPattern* pattern, FILE* file)
 void
 vp3WriteStringLen(FILE* file, const char* str, int len)
 {
-    emb_write_u16BE(file, len);
+    emb_write_u16be(file, len);
     fwrite(str, 1, len, file);
 }
 
@@ -8729,9 +8741,9 @@ writeXxx(EmbPattern* pattern, FILE* file)
     EmbRect rect;
     int endOfStitches;
     EmbReal width, height;
-    short to_write;
-    unsigned int n_stitches;
-    unsigned short n_threads;
+    //short to_write;
+    //unsigned int n_stitches;
+    //unsigned short n_threads;
 
     emb_pattern_correctForMaxStitchLength(pattern, 124, 127);
 

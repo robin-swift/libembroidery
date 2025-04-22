@@ -152,6 +152,15 @@ extern "C" {
 #define EMB_VECTOR                    18
 #define EMB_THREAD                    19
 
+#define SCRIPT_NULL                    0
+#define SCRIPT_INT                     1
+#define SCRIPT_REAL                    2
+#define SCRIPT_COMMAND                 3
+#define SCRIPT_STRING                  4
+#define SCRIPT_BOOL                    5
+#define SCRIPT_TABLE                   6
+#define SCRIPT_VECTOR                  7
+
 #define EMBFORMAT_UNSUPPORTED                   0
 #define EMBFORMAT_STITCHONLY                    1
 #define EMBFORMAT_OBJECTONLY                    2
@@ -364,32 +373,44 @@ extern "C" {
 #define EMB_DATATYPE_ARRAY             3
 #define EMB_DATATYPE_INT               4
 #define EMB_DATATYPE_REAL              5
-#define EMB_DATATYPE_ROOT              6
+#define EMB_DATATYPE_VECTOR            6
+#define EMB_DATATYPE_ROOT              7
 
 /* Attribute identifier. These numbers fit within int32_t: that is, there are
  * up to 31 flags we can set this way.
+ *
+ * WARNING: please do not rely on the specific ordering of these attributes,
+ * they are subject to change.
  */
-#define EMB_ATTR_X1                    0x1
-#define EMB_ATTR_Y1                    0x2
-#define EMB_ATTR_X2                    0x4
-#define EMB_ATTR_Y2                    0x8
-#define EMB_ATTR_X3                   0x10
-#define EMB_ATTR_Y3                   0x20
-#define EMB_ATTR_XPOS                 0x40
-#define EMB_ATTR_YPOS                 0x80
-#define EMB_ATTR_XCENTER             0x100
-#define EMB_ATTR_YCENTER             0x200
-#define EMB_ATTR_WIDTH               0x400
-#define EMB_ATTR_HEIGHT              0x800
-#define EMB_ATTR_RADIUS             0x1000
-#define EMB_ATTR_DIAMETER           0x2000
-#define EMB_ATTR_AREA               0x4000
-#define EMB_ATTR_PERIMETER          0x8000
-#define EMB_ATTR_CIRCUMFERENCE     0x10000
-#define EMB_ATTR_BOLD              0x20000
-#define EMB_ATTR_ITALIC            0x40000
-#define EMB_ATTR_UPSIDEDOWN        0x80000
-#define EMB_ATTR_BACKWARDS        0x100000
+#define EMB_START                   0x1
+#define EMB_MID                     0x2
+#define EMB_END                     0x4
+#define EMB_POSITION                0x8
+#define EMB_CENTER                 0x10
+#define EMB_WIDTH                  0x20
+#define EMB_HEIGHT                 0x40
+#define EMB_RADIUS                 0x80
+#define EMB_DIAMETER              0x100
+#define EMB_AREA                  0x200
+#define EMB_PERIMETER             0x400
+#define EMB_CIRCUMFERENCE         0x800
+#define EMB_BOLD                 0x1000
+#define EMB_ITALIC               0x2000
+#define EMB_UPSIDEDOWN           0x4000
+#define EMB_BACKWARDS            0x8000
+#define EMB_STRIKEOUT           0x10000
+#define EMB_UNDERLINE           0x20000
+#define EMB_OVERLINE            0x40000
+#define EMB_BULGE               0x80000
+#define EMB_SAGITTA            0x100000
+#define EMB_SIZE               0x200000
+#define EMB_FONT               0x400000
+#define EMB_CHORDMID           0x800000
+#define EMB_INCANGLE          0x1000000
+#define EMB_APOTHEM           0x2000000
+#define EMB_CHORDANGLE        0x4000000
+#define EMB_CHORD             0x8000000
+#define EMB_CLOCKWISE        0x10000000
 
 /* UTILITY MACROS
  * --------------
@@ -753,6 +774,7 @@ typedef struct ScriptValue_ {
     EmbReal r;
     int i;
     unsigned char b;
+    EmbVector v;
     EmbString s;
     EmbString label;
     struct ScriptValue_* leaves;
@@ -768,6 +790,22 @@ typedef struct ScriptEnv_ {
     int mode;
     unsigned char firstRun;
 } ScriptEnv;
+
+typedef struct Design_ {
+    char *command;
+    float lower;
+    float upper;
+    int num_points;
+    int min_points;
+    int max_points;
+    float xscale;
+    float yscale;
+    char *parameter;
+    char *x;
+    char *y;
+} Design;
+
+#define END_SYMBOL            "__END__"
 
 /* The pattern type variable denotes the type that was read in and uses the
  * EMB_FORMAT contants. Changing this type directly would break how data is
@@ -1058,12 +1096,8 @@ EMB_PUBLIC int lindenmayer_system(L_system L, char* state, int iteration, int co
 EMB_PUBLIC int hilbert_curve(EmbPattern *pattern, int iterations);
 
 /* Set or get geometric object's attributes. */
-EMB_PUBLIC int emb_gsetr(EmbGeometry *g, int attribute, EmbReal value);
-EMB_PUBLIC EmbReal emb_ggetr(EmbGeometry *g, int attribute);
-EMB_PUBLIC int emb_gseti(EmbGeometry *g, int attribute, int value);
-EMB_PUBLIC int emb_ggeti(EmbGeometry *g, int attribute);
-EMB_PUBLIC int emb_gsets(EmbGeometry *g, int attribute, char *value);
-EMB_PUBLIC char *emb_ggets(EmbGeometry *g, int attribute);
+EMB_PUBLIC int emb_gset(EmbGeometry *g, int attribute, ScriptValue value);
+EMB_PUBLIC ScriptValue emb_gget(EmbGeometry *g, int attribute);
 
 EMB_PUBLIC int emb_identify_format(const char *ending);
 EMB_PUBLIC int convert(const char *inf, const char *outf);
@@ -1124,14 +1158,6 @@ EMB_PUBLIC EmbVector emb_vector_unit(EmbReal angle);
 
 EMB_PUBLIC EmbGeometry emb_arc(EmbReal, EmbReal, EmbReal, EmbReal, EmbReal, EmbReal);
 EMB_PUBLIC char emb_arc_clockwise(EmbGeometry arc);
-EMB_PUBLIC EmbVector emb_arc_center(EmbGeometry arc);
-EMB_PUBLIC EmbReal emb_arc_radius(EmbGeometry arc);
-EMB_PUBLIC EmbReal emb_arc_diameter(EmbGeometry arc);
-EMB_PUBLIC EmbVector emb_arc_chordMid(EmbGeometry arc);
-EMB_PUBLIC EmbReal emb_arc_sagitta(EmbGeometry arc);
-EMB_PUBLIC EmbReal emb_arc_apothem(EmbGeometry arc);
-EMB_PUBLIC EmbReal emb_arc_incAngle(EmbGeometry arc);
-EMB_PUBLIC EmbReal emb_arc_bulge(EmbGeometry arc);
 
 EMB_PUBLIC EmbGeometry emb_circle(EmbReal x, EmbReal y, EmbReal r);
 EMB_PUBLIC int getCircleCircleIntersections(
@@ -1335,6 +1361,12 @@ double emb_stitch_length(EmbStitch prev_st, EmbStitch st);
 
 int emb_readline(FILE* file, char *line, int maxLength);
 
+ScriptValue script_bool(unsigned char b);
+ScriptValue script_int(int i);
+ScriptValue script_real(EmbReal r);
+ScriptValue script_string(char *s);
+ScriptValue script_vector(EmbVector v);
+
 int16_t emb_read_i16(FILE* f);
 uint16_t emb_read_u16(FILE* f);
 int32_t emb_read_i32(FILE* f);
@@ -1348,8 +1380,8 @@ void emb_write_i16(FILE* f, int16_t data);
 void emb_write_u16(FILE* f, uint16_t data);
 void emb_write_i32(FILE* f, int32_t data);
 void emb_write_u32(FILE* f, uint32_t data);
-void emb_write_i16BE(FILE* f, int16_t data);
-void emb_write_u16BE(FILE* f, uint16_t data);
+void emb_write_i16be(FILE* f, int16_t data);
+void emb_write_u16be(FILE* f, uint16_t data);
 void emb_write_i32be(FILE* f, int32_t data);
 void emb_write_u32be(FILE* f, uint32_t data);
 

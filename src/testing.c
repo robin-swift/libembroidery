@@ -273,18 +273,18 @@ test_arc_properties(void)
     EmbGeometry g = emb_arc(1.0, 0.0, 0.0, 0.0, 2.0, 1.0);
     EmbVector center, chordMid;
     EmbReal bulge, radius, diameter, chord, sagitta, apothem, incAngle;
-    char clockwise;
+    unsigned char clockwise;
 
     bulge = -0.414213562373095f;
-    center = emb_arc_center(g);
-    chord = emb_chord(&g);
-    radius = emb_arc_radius(g);
-    diameter = emb_arc_diameter(g);
-    chordMid = emb_arc_chordMid(g);
-    sagitta = emb_arc_sagitta(g);
-    apothem = emb_arc_apothem(g);
-    incAngle = emb_arc_incAngle(g);
-    clockwise = emb_arc_clockwise(g);
+    center = emb_gget(&g, EMB_CENTER).v;
+    chord = emb_gget(&g, EMB_CHORD).r;
+    radius = emb_gget(&g, EMB_RADIUS).r;
+    diameter = emb_gget(&g, EMB_DIAMETER).r;
+    chordMid = emb_gget(&g, EMB_CHORDMID).v;
+    sagitta = emb_gget(&g, EMB_SAGITTA).r;
+    apothem = emb_gget(&g, EMB_APOTHEM).r;
+    incAngle = emb_gget(&g, EMB_INCANGLE).r;
+    clockwise = emb_gget(&g, EMB_CLOCKWISE).b;
     /* bulge = emb_arc_bulge(g); */
     printf("Clockwise Test:\n");
     printArcResults(bulge, g.object.arc, center,
@@ -296,15 +296,15 @@ test_arc_properties(void)
     bulge  = 2.414213562373095f;
     /* FIXME: midpoints */
     g = emb_arc(4.0, 0.0, 0.0, 0.0, 5.0, 1.0);
-    center = emb_arc_center(g);
-    chord = emb_chord(&g);
-    radius = emb_arc_radius(g);
-    diameter = emb_arc_diameter(g);
-    chordMid = emb_arc_chordMid(g);
-    sagitta = emb_arc_sagitta(g);
-    apothem = emb_arc_apothem(g);
-    incAngle = emb_arc_incAngle(g);
-    clockwise = emb_arc_clockwise(g);
+    center = emb_gget(&g, EMB_CENTER).v;
+    chord = emb_gget(&g, EMB_CHORD).r;
+    radius = emb_gget(&g, EMB_RADIUS).r;
+    diameter = emb_gget(&g, EMB_DIAMETER).r;
+    chordMid = emb_gget(&g, EMB_CHORDMID).v;
+    sagitta = emb_gget(&g, EMB_SAGITTA).r;
+    apothem = emb_gget(&g, EMB_APOTHEM).r;
+    incAngle = emb_gget(&g, EMB_INCANGLE).r;
+    clockwise = emb_gget(&g, EMB_CLOCKWISE).b;
     /* bulge = emb_arc_bulge(g); */
     printf("Counter-Clockwise Test:\n");
     printArcResults(bulge, g.object.arc, center,

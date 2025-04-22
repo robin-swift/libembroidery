@@ -345,6 +345,56 @@ static char in_built_functions[][20] = {
     ""
 };
 
+/* . */
+ScriptValue
+script_bool(unsigned char b)
+{
+    ScriptValue value;
+    value.type = SCRIPT_BOOL;
+    value.b = b;
+    return value;
+}
+
+/* . */
+ScriptValue
+script_int(int i)
+{
+    ScriptValue value;
+    value.type = SCRIPT_INT;
+    value.i = i;
+    return value;
+}
+
+/* . */
+ScriptValue
+script_real(EmbReal r)
+{
+    ScriptValue value;
+    value.type = SCRIPT_REAL;
+    value.r = r;
+    return value;
+}
+
+/* . */
+ScriptValue
+script_string(char *s)
+{
+    ScriptValue value;
+    value.type = SCRIPT_STRING;
+    strncpy(value.s, s, MAX_STRING_LENGTH);
+    return value;
+}
+
+/* . */
+ScriptValue
+script_vector(EmbVector v)
+{
+    ScriptValue value;
+    value.type = SCRIPT_VECTOR;
+    value.v = v;
+    return value;
+}
+
 /* .
  */
 void

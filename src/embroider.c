@@ -248,7 +248,7 @@ main(int argc, char *argv[])
                 break;
             }
             sprintf(script, "%s %s %s circle", argv[i+1], argv[i+2], argv[i+3]);
-            emb_actuator(current_pattern, script);
+            emb_actuator(current_pattern, script, LANG_PS);
             break;
         }
         case FLAG_ELLIPSE:

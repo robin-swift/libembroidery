@@ -496,6 +496,7 @@ emb_quadrant(EmbGeometry *geometry, int degrees)
     case EMB_CIRCLE: {
         v = geometry->object.circle.center;
         radius = geometry->object.circle.radius;
+        break;
     }
     case EMB_ELLIPSE: {
         v = geometry->object.ellipse.center;
@@ -505,6 +506,7 @@ emb_quadrant(EmbGeometry *geometry, int degrees)
         else {
             radius = geometry->object.ellipse.radius.y;
         }
+        break;
     }
     default:
         break;
@@ -617,6 +619,7 @@ emb_included_angle(EmbGeometry *geometry)
 {
     switch (geometry->type) {
     case EMB_ARC: {
+        /* Properties of a Circle - Get the Included Angle - Reference: ASD9 */
         double chord = emb_chord(geometry);
         double rad = emb_radius(geometry);
         if (chord <= 0 || rad <= 0) {
@@ -630,7 +633,7 @@ emb_included_angle(EmbGeometry *geometry)
         double quotient = chord/(2.0*rad);
         quotient = EMB_MIN(1.0, quotient);
         quotient = EMB_MAX(0.0, quotient); /* NOTE: 0 rather than -1 since we are enforcing a positive chord and radius */
-        return degrees(2.0*asin(quotient)); /* Properties of a Circle - Get the Included Angle - Reference: ASD9 */
+        return degrees(2.0*asin(quotient));
     }
     default:
         break;
@@ -660,6 +663,7 @@ emb_clockwise(EmbGeometry *geometry)
 void
 emb_set_start_angle(EmbGeometry *geometry, double angle)
 {
+    printf("%f\n", angle);
     switch (geometry->type) {
     case EMB_ARC: {
         /* TODO: ArcObject setObjectStartAngle */
@@ -674,6 +678,7 @@ emb_set_start_angle(EmbGeometry *geometry, double angle)
 void
 emb_set_end_angle(EmbGeometry *geometry, double angle)
 {
+    printf("%f\n", angle);
     switch (geometry->type) {
     case EMB_ARC: {
         /* TODO: ArcObject setObjectEndAngle */
@@ -1639,8 +1644,10 @@ void set_object_color(EmbGeometry *obj, EmbColor color)
     */
 }
 
-void embGeometry_setColorRGB(EmbGeometry *obj, unsigned int rgb)
+void
+embGeometry_setColorRGB(EmbGeometry *obj, unsigned int rgb)
 {
+    printf("%p", obj);
     printf("%d", rgb);
     /*
     objPen.setColor(QColor(rgb));
@@ -1651,7 +1658,7 @@ void embGeometry_setColorRGB(EmbGeometry *obj, unsigned int rgb)
 void
 embGeometry_setLineType(EmbGeometry *obj, int lineType)
 {
-    printf("%d", lineType);
+    printf("%p %d\n", obj, lineType);
     /*
     objPen.setStyle(lineType);
     lwtPen.setStyle(lineType);
@@ -1661,7 +1668,7 @@ embGeometry_setLineType(EmbGeometry *obj, int lineType)
 void
 embGeometry_setLineWeight(EmbGeometry *obj, float lineWeight)
 {
-    printf("%f", lineWeight);
+    printf("%p %f\n", obj, lineWeight);
     /*
     objPen.setWidthF(0); //NOTE: The objPen will always be cosmetic
 
@@ -1692,7 +1699,7 @@ emb_base_rubber_point(EmbGeometry *obj, const char *key)
     EmbVector v;
     v.x = 0.0;
     v.y = 0.0;
-    printf("%s", key);
+    printf("%p %s\n", obj, key);
     /*
     if (objRubberPoints.contains(key)) {
         return objRubberPoints.value(key);
@@ -1709,7 +1716,7 @@ emb_base_rubber_point(EmbGeometry *obj, const char *key)
 const char *
 emb_base_rubber_text(EmbGeometry *obj, const char *key)
 {
-    printf("%s", key);
+    printf("%p %s\n", obj, key);
     /*
     if (objRubberTexts.contains(key))
         return objRubberTexts.value(key);
@@ -1720,7 +1727,7 @@ emb_base_rubber_text(EmbGeometry *obj, const char *key)
 /*
  */
 void
-emb_circle_main()
+emb_circle_main(void)
 {
     /*
     initCommand();
@@ -1931,7 +1938,7 @@ dimleader_updateLeader()
 */
 
 void
-emb_ellipse_main()
+emb_ellipse_main(void)
 {
     /*
     initCommand();
@@ -2281,8 +2288,10 @@ rect_topRight()
 }
 */
 
-EmbVector embRect_bottomLeft(EmbRect rect)
+EmbVector
+embRect_bottomLeft(EmbRect rect)
 {
+    printf("%f", rect.x);
     EmbVector v;
     v.x = 0.0;
     v.y = 0.0;
@@ -2295,8 +2304,10 @@ EmbVector embRect_bottomLeft(EmbRect rect)
     return v;
 }
 
-EmbVector embRect_bottomRight(EmbRect rect)
+EmbVector
+embRect_bottomRight(EmbRect rect)
 {
+    printf("%f", rect.x);
     EmbVector v;
     v.x = 0.0;
     v.y = 0.0;
@@ -2787,9 +2798,29 @@ void textSingle_setText(const char* str)
 }
 */
 
+const char *justify_options[] = {
+    "Left",
+    "Center",
+    "Right",
+    "Aligned",
+    "Middle",
+    "Fit",
+    "Top Left",
+    "Top Center",
+    "Top Right",
+    "Middle Left",
+    "Middle Center",
+    "Middle Right",
+    "Bottom Left",
+    "Bottom Center",
+    "Bottom Right",
+    END_SYMBOL
+};
+
 void
-textSingle_setJustify(const char *justify)
+textSingle_setJustify(EmbGeometry *g, const char *justify)
 {
+    printf("%p, %s\n", g, justify);
     /*
     // Verify the string is a valid option
     objTextJustify = "Left";
@@ -2867,6 +2898,12 @@ emb_gget(EmbGeometry *g, int attribute)
         v = script_vector(emb_vector_subtract(end, start));
         break;
     }
+    /*
+    case EMB_CHORDLENGTH: {
+        v = script_real(emb_chord(g));
+        break;
+    }
+    */
     case EMB_CHORDANGLE: {
         EmbVector delta = emb_gget(g, EMB_CHORD).v;
         v = script_real(emb_vector_angle(delta));
@@ -2910,7 +2947,7 @@ emb_gget(EmbGeometry *g, int attribute)
         break;
     }
     case EMB_SAGITTA: {
-        EmbReal chord = emb_chord(&g);
+        EmbReal chord = emb_chord(g);
         ScriptValue bulge = emb_gget(g, EMB_BULGE);
         return script_real(fabs((chord / 2.0) * bulge.r));
     }

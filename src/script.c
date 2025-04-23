@@ -29,6 +29,9 @@
 #include "embroidery.h"
 #include "../extern/mpc/mpc.h"
 
+void embPattern_addArc(EmbPattern *pattern, EmbArc arc);
+int process_stack_head(EmbStack *stack);
+
 static EmbPattern *focussed_pattern = NULL;
 
 /* Internally, we use fixed-point arithmetic because it can be made more
@@ -381,7 +384,7 @@ script_string(char *s)
 {
     ScriptValue value;
     value.type = SCRIPT_STRING;
-    strncpy(value.s, s, MAX_STRING_LENGTH);
+    strncpy(value.s, s, MAX_STRING_LENGTH-1);
     return value;
 }
 
@@ -430,7 +433,7 @@ stack_push(EmbStack *stack, char *token)
     int all_digits = 1;
     int decimal_place_present = 0;
     if (token[0] == 0) {
-        return;
+        return -1;
     }
     strncpy(stack->stack[stack->position].s, token, 200);
     stack->position++;    
@@ -1080,7 +1083,7 @@ emb_repl(void)
     while (running) {
         char line[200];
         int i = 0;
-        unsigned char c = 0;
+        int c = 0;
         printf("emb> ");
         while (c != EOF) {
             c = fgetc(stdin);
@@ -1181,6 +1184,7 @@ emb_processor(char *state, const char *program, int program_length)
             }
             EmbVector center = emb_vector_from_bytes(program, i+1);
             EmbReal r = emb_real_from_bytes(program, i+5);
+            printf("%f %f", center.x, r);
 
             i += 6;
             break;
@@ -1228,8 +1232,9 @@ emb_compiler(const char *program, int language, char *compiled_program)
 
 /* Calls the compiler, then runs the compiled program. */
 void
-emb_actuator(const char *program, int language)
+emb_actuator(EmbPattern *pattern, const char *program, int language)
 {
+    printf("%p\n", pattern);
     char *state = malloc(1000);
     char *compiled_program = malloc(1000);
     int output_length = emb_compiler(program, language, compiled_program);

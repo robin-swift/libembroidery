@@ -11,7 +11,7 @@ function test_build () {
     OPTIONS="-g -O2 -fPIC -std=c99 -Wall -Wextra -Werror"
     rm -fr test
     mkdir test
-    time $CC $OPTIONS src/embroider.c -o $EMB -lm || exit 1
+    time $CC $OPTIONS src/*.c -o $EMB -lm || exit 1
 }
 
 function test_wrap () {

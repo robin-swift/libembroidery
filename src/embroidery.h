@@ -376,6 +376,23 @@ extern "C" {
 #define EMB_DATATYPE_VECTOR            6
 #define EMB_DATATYPE_ROOT              7
 
+/* Justification */
+#define EMB_JUST_LEFT                  0
+#define EMB_JUST_CENTER                1
+#define EMB_JUST_RIGHT                 2
+#define EMB_JUST_ALIGNED               3
+#define EMB_JUST_MIDDLE                4
+#define EMB_JUST_FIT                   5
+#define EMB_JUST_TOPLEFT               6
+#define EMB_JUST_TOPCENTER             7
+#define EMB_JUST_TOPRIGHT              8
+#define EMB_JUST_MIDLEFT               9
+#define EMB_JUST_MIDCENTER            10
+#define EMB_JUST_MIDRIGHT             11
+#define EMB_JUST_BOTLEFT              12
+#define EMB_JUST_BOTCENTER            13
+#define EMB_JUST_BOTRIGHT             14
+
 /* Attribute identifier. These numbers fit within int32_t: that is, there are
  * up to 31 flags we can set this way.
  *
@@ -1099,19 +1116,28 @@ EMB_PUBLIC int hilbert_curve(EmbPattern *pattern, int iterations);
 EMB_PUBLIC int emb_gset(EmbGeometry *g, int attribute, ScriptValue value);
 EMB_PUBLIC ScriptValue emb_gget(EmbGeometry *g, int attribute);
 
+EMB_PUBLIC void to_flag(char **argv, int argc, int i);
+EMB_PUBLIC void formats(void);
 EMB_PUBLIC int emb_identify_format(const char *ending);
 EMB_PUBLIC int convert(const char *inf, const char *outf);
 
 EMB_PUBLIC EmbVector emb_vector(EmbReal x, EmbReal y);
 
+EMB_PUBLIC int test_convert(int test_case, int from, int to);
+
+/* Scripting */
+EMB_PUBLIC void execute_postscript(EmbStack *stack, char line[200]);
+EMB_PUBLIC int emb_repl(void);
 EMB_PUBLIC void emb_processor(char *state, const char *program, int program_length);
 EMB_PUBLIC int emb_compiler(const char *program, int language, char *compiled_program);
-EMB_PUBLIC void emb_actuator(const char *program, int language);
+EMB_PUBLIC void emb_actuator(EmbPattern *pattern, const char *program, int language);
 
+/* Colors */
 EMB_PUBLIC EmbColor embColor_make(unsigned char r, unsigned char g, unsigned char b);
 EMB_PUBLIC EmbColor embColor_fromHexStr(char* val);
 EMB_PUBLIC int embColor_distance(EmbColor a, EmbColor b);
 
+/* Arrays */
 EMB_PUBLIC EmbArray* emb_array_create(int type);
 EMB_PUBLIC int emb_array_resize(EmbArray *g);
 EMB_PUBLIC void emb_array_copy(EmbArray *dst, EmbArray *src);
@@ -1306,12 +1332,6 @@ EMB_PUBLIC void emb_set_diameter_minor(EmbGeometry *geometry, double diameter);
 
 EMB_PUBLIC char *emb_get_svg_token(char *svg, char token[MAX_STRING_LENGTH]);
 EMB_PUBLIC char *emb_get_svg_vector(char *svg, EmbVector *v);
-
-EMB_PUBLIC void execute_postscript(EmbStack *stack, char line[200]);
-EMB_PUBLIC int emb_repl(void);
-EMB_PUBLIC void emb_processor(char *state, const char *program, int program_length);
-EMB_PUBLIC int emb_compiler(const char *program, int language, char *compiled_program);
-EMB_PUBLIC void emb_actuator(const char *program, int language);
 
 /* Internal function declarations.
  * ----------------------------------------------------------------------------

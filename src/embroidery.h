@@ -28,6 +28,8 @@ extern "C" {
 
 #include <stdio.h>
 #include <stdint.h>
+#include <stdbool.h>
+#include <stdarg.h>
 #include <inttypes.h>
 
 /* Version elements */
@@ -1124,6 +1126,20 @@ EMB_PUBLIC int convert(const char *inf, const char *outf);
 EMB_PUBLIC EmbVector emb_vector(EmbReal x, EmbReal y);
 
 EMB_PUBLIC int test_convert(int test_case, int from, int to);
+
+EMB_PUBLIC char read_n_bytes(FILE *file, unsigned char *data, unsigned int length);
+EMB_PUBLIC bool string_equal(char *a, const char *b);
+EMB_PUBLIC int parse_floats(const char *line, float result[], int n);
+EMB_PUBLIC int parse_vector(const char *line, EmbVector *v);
+EMB_PUBLIC bool valid_rgb(float r, float g, float b);
+EMB_PUBLIC int table_length(char *s[]);
+EMB_PUBLIC unsigned char *load_file(char *fname);
+EMB_PUBLIC bool int32_underflow(int64_t a, int64_t b);
+EMB_PUBLIC bool int32_overflow(int64_t a, int64_t b);
+EMB_PUBLIC int round_to_multiple(bool roundUp, int numToRound, int multiple);
+EMB_PUBLIC void debug_message(const char *msg, ...);
+EMB_PUBLIC bool valid_file_format(char *fileName);
+EMB_PUBLIC int get_id(char *data[], char *label);
 
 /* Scripting */
 EMB_PUBLIC void execute_postscript(EmbStack *stack, char line[200]);

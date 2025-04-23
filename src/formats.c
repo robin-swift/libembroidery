@@ -22,6 +22,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 #include <math.h>
 
 #include "embroidery.h"
@@ -42,11 +43,11 @@
  * seperate all declarations to the start of the scope they sit in.
  */
 #define LOAD_U8(FILE, X) \
-    fread(&X, 1, 1, FILE); \
+    if (fread(&X, 1, 1, FILE) != 1) { \
+        puts("ERROR: failed to read single byte from file."); \
+    } \
     REPORT_INT(X)
-#define LOAD_I8(FILE, X) \
-    fread(&X, 1, 1, FILE); \
-    REPORT_INT(X)
+#define LOAD_I8(FILE, X) LOAD_U8(FILE, X)
 
 #define LOAD_U16(FILE, X) \
     X = emb_read_u16(FILE); \
@@ -268,6 +269,17 @@ emb_identify_format(const char *fileName)
         }
     }
     return -1;
+}
+
+/* . */
+char
+read_n_bytes(FILE *file, unsigned char *data, unsigned int length)
+{
+    if (fread(data, 1, length, file) != length) {
+        printf("ERROR: failed to read %d bytes from file.", length);
+        return 0;
+    }
+    return 1;
 }
 
 /* . */
@@ -4688,6 +4700,7 @@ readPec(EmbPattern* pattern, const char *fileName, FILE* file)
     graphicsOffset = (unsigned int)(fgetc(file));
     graphicsOffset |= (fgetc(file) << 8);
     graphicsOffset |= (fgetc(file) << 16);
+    REPORT_INT(graphicsOffset)
 
     (void)(char)fgetc(file); /* 0x31 */
     (void)(char)fgetc(file); /* 0xFF */
@@ -6081,7 +6094,9 @@ readStx(EmbPattern* pattern, FILE* file)
     }
 
     /* bytes 0-6 */
-    fread(headerBytes, 1, 7, file); /* TODO: check return value */
+    if (!read_n_bytes(file, headerBytes, 7)) {
+        return 0;
+    }
     header = (char*)headerBytes;
 
     /* bytes 7-9 */
@@ -6115,7 +6130,9 @@ readStx(EmbPattern* pattern, FILE* file)
         printf("ERROR: format-stx.c readStx(), unable to allocate memory for gif\n");
         return 0;
     }
-    fread(gif, 1, imageLength, file); /* TODO: check return value */
+    if (!read_n_bytes(file, gif, imageLength)) {
+        return 0;
+    }
     /*Stream s2 = new MemoryStream(gif); TODO: review */
     /*Image = new Bitmap(s2); TODO: review */
 
@@ -7968,7 +7985,9 @@ readVip(EmbPattern* pattern, FILE* file)
     header.xOffset = emb_read_i32(file);
     header.yOffset = emb_read_i32(file);
 
-    fread(header.stringVal, 1, 8, file); /* TODO: check return value */
+    if (!read_n_bytes(file, header.stringVal, 8)) {
+        return 0;
+    }
 
     header.unknown = emb_read_i16(file);
 
@@ -8340,7 +8359,10 @@ readVp3(EmbPattern* pattern, FILE* file)
 
     /* TODO: check return value */
     /* 0x78 0x78 0x55 0x55 0x01 0x00 */
-    fread(magicCode, 1, 6, file);
+    if (fread(magicCode, 1, 6, file) != 6) {
+        puts("ERROR: Failed to read magicCode.");
+        return 0;
+    }
 
     anotherSoftwareVendorString = vp3ReadString(file);
     REPORT_STR(anotherSoftwareVendorString);

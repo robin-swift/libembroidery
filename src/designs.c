@@ -197,7 +197,7 @@ updateDolphin(int numPts, float xScale, float yScale)
 }
 #endif
 
-const Design heart4 = {
+Design heart4 = {
     .command = "heart4",
     .lower = 0.0,
     .upper = 2.0,
@@ -272,7 +272,7 @@ updateHeart(int style, int numPts, float xScale, float yScale)
  * x(t) = 16*pow(sin(t), 3)
  * y(t) = 13*cos(t) - 5*cos(2*t) - 2*cos(3*t) - cos(4*t)
  */
-const Design heart5 = {
+Design heart5 = {
     .command = "heart5",
     .lower = 0.0,
     .upper = 2.0,
@@ -1717,8 +1717,10 @@ function updateClef(numPts, xScale, yScale)
 #endif
 
 Design designs[] = {
+    /*
     heart4,
     heart5,
+    */
     {
         .command = END_SYMBOL
     }

@@ -804,6 +804,8 @@ typedef struct ScriptValue_ {
 
 typedef struct ScriptEnv_ {
     ScriptValue argument[MAX_ARGS];
+    ScriptValue *variables;
+    int n_variables;
     int argumentCount;
     int context;
     int mode;

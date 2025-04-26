@@ -1494,6 +1494,7 @@ emb_create_leaf(ScriptValue *branch, int type, char *label, char *data)
         branch->max_leaves += CHUNK_SIZE;
         branch->leaves = (ScriptValue *)realloc(branch->leaves, branch->max_leaves * sizeof(ScriptValue));
     }
+    branch->n_leaves++;
     branch->type = type;
     strcpy(branch->leaves[n].label, label);
     strcpy(branch->leaves[n].s, data);
@@ -1557,9 +1558,22 @@ emb_print_tree(ScriptValue *tree, int indent)
     case EMB_DATATYPE_DICT:
     case EMB_DATATYPE_ARRAY: {
         int i;
+        printf("%*c%s:\n", indent, ' ', tree->label);
         for (i=0; i<tree->n_leaves; i++) {
             emb_print_tree(tree, indent+1);
         }
+        break;
+    }
+    case EMB_DATATYPE_STR: {
+        printf("%*c%s: %s\n", indent, ' ', tree->label, tree->s);
+        break;
+    }
+    case EMB_DATATYPE_INT: {
+        printf("%*c%s: %d\n", indent, ' ', tree->label, tree->i);
+        break;
+    }
+    case EMB_DATATYPE_REAL: {
+        printf("%*c%s: %f\n", indent, ' ', tree->label, tree->r);
         break;
     }
     default:

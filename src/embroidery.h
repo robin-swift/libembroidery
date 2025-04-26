@@ -1120,6 +1120,11 @@ EMB_PUBLIC int hilbert_curve(EmbPattern *pattern, int iterations);
 EMB_PUBLIC int emb_gset(EmbGeometry *g, int attribute, ScriptValue value);
 EMB_PUBLIC ScriptValue emb_gget(EmbGeometry *g, int attribute);
 
+ScriptValue *emb_create_root(void);
+int emb_create_leaf(ScriptValue *branch, int type, char *label, char *data);
+void emb_free_root(ScriptValue *root);
+void emb_print_tree(ScriptValue *tree, int indent);
+
 EMB_PUBLIC void to_flag(char **argv, int argc, int i);
 EMB_PUBLIC void formats(void);
 EMB_PUBLIC int emb_identify_format(const char *ending);

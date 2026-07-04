@@ -523,56 +523,6 @@ extern "C" {
 #define EMB_MIN(A, B)     (((A) < (B)) ? (A) : (B))
 #define EMB_MAX(A, B)     (((A) > (B)) ? (A) : (B))
 
-/* DEBUGGING MACROS
- * ----------------
- */
-#define REPORT_VALUE(X, TYPE) \
-    if (emb_verbose>1) { \
-        printf(#X ": %" #TYPE "\n", X); \
-    }
-#define REPORT_INT(X)          REPORT_VALUE(X, d)
-#define REPORT_FLOAT(X)        REPORT_VALUE(X, f)
-#define REPORT_STR(X)          REPORT_VALUE(X, s)
-#define REPORT_PTR(X)          REPORT_VALUE(X, p)
-
-/* Automating reporting as part of loading a value.
- *
- * NOTE: declarations are kept seperate because in C90 we may need to
- * seperate all declarations to the start of the scope they sit in.
- */
-#define LOAD_U8(FILE, X) \
-    if (fread(&X, 1, 1, FILE) != 1) { \
-        puts("ERROR: failed to read single byte from file."); \
-    } \
-    REPORT_INT(X)
-#define LOAD_I8(FILE, X) LOAD_U8(FILE, X)
-
-#define LOAD_U16(FILE, X) \
-    X = emb_read_u16(FILE); \
-    REPORT_INT(X)
-#define LOAD_I16(FILE, X) \
-    X = emb_read_i16(FILE); \
-    REPORT_INT(X)
-#define LOAD_U32(FILE, X) \
-    X = emb_read_u32(FILE); \
-    REPORT_INT(X)
-#define LOAD_I32(FILE, X) \
-    X = emb_read_i32(FILE); \
-    REPORT_INT(X)
-
-#define LOAD_U16_BE(FILE, X) \
-    X = emb_read_u16be(FILE); \
-    REPORT_INT(X)
-#define LOAD_I16_BE(FILE, X) \
-    X = emb_read_i16be(FILE); \
-    REPORT_INT(X)
-#define LOAD_U32_BE(FILE, X) \
-    X = emb_read_u32be(FILE); \
-    REPORT_INT(X)
-#define LOAD_I32_BE(FILE, X) \
-    X = emb_read_i32be(FILE); \
-    REPORT_INT(X)
-
 /* COMPILATION SETTINGS
  * --------------------
  */
@@ -1234,6 +1184,7 @@ EMB_PUBLIC int emb_identify_format(const int8_t *ending);
 EMB_PUBLIC int convert(const int8_t *inf, const int8_t *outf);
 
 EMB_PUBLIC EmbVector emb_vector(EmbReal x, EmbReal y);
+EMB_PUBLIC void emb_vector_print(EmbVector v, int8_t *label);
 
 EMB_PUBLIC int embstr_len(EmbString str);
 EMB_PUBLIC int8_t read_n_bytes(FILE *file, uint8_t *data, uint32_t length);
@@ -1286,8 +1237,8 @@ EMB_PUBLIC void emb_array_free(EmbArray* p);
 
 EMB_PUBLIC EmbLine emb_line_make(EmbReal x1, EmbReal y1, EmbReal x2, EmbReal y2);
 
-EMB_PUBLIC EmbVector emb_line_normalVector(EmbLine line, int clockwise);
-EMB_PUBLIC EmbVector emb_line_intersectionPoint(EmbLine line1, EmbLine line2, int *error_code);
+EMB_PUBLIC EmbVector emb_line_normal(EmbLine line, int clockwise);
+EMB_PUBLIC EmbVector emb_line_intersection(EmbLine line1, EmbLine line2, int *error_code);
 
 /* Encoding */
 uint8_t toyota_position_encode(EmbReal x);
@@ -1314,6 +1265,9 @@ EMB_PUBLIC EmbVector emb_vector_unit(EmbReal angle);
 
 EMB_PUBLIC EmbGeometry emb_arc(EmbReal, EmbReal, EmbReal, EmbReal, EmbReal, EmbReal);
 EMB_PUBLIC int8_t emb_arc_clockwise(EmbGeometry arc);
+EMB_PUBLIC void emb_arc_print(EmbArc arc);
+EMB_PUBLIC EmbVector emb_arc_center(EmbArc arc, EmbError *error);
+EMB_PUBLIC EmbError emb_arc_set_center(EmbGeometry *g, EmbVector point);
 
 EMB_PUBLIC EmbCircle emb_circle(EmbReal x, EmbReal y, EmbReal r);
 EMB_PUBLIC void emb_circle_set_area(EmbCircle *circle, float area);
@@ -1432,7 +1386,6 @@ EMB_PUBLIC EmbVector scale_and_rotate(EmbVector v, double angle, double scale);
 EMB_PUBLIC EmbReal emb_angle(EmbGeometry *geometry, EmbError *error);
 EMB_PUBLIC EmbReal emb_arc_length(EmbGeometry *geometry, EmbError *error);
 EMB_PUBLIC EmbReal emb_area(EmbGeometry *geometry, EmbError *error);
-EMB_PUBLIC EmbVector emb_center(EmbGeometry *geometry, EmbError *error);
 EMB_PUBLIC EmbVector emb_chord(EmbGeometry *geometry, EmbError *error);
 EMB_PUBLIC EmbReal emb_chord_length(EmbGeometry *geometry, EmbError *error);
 EMB_PUBLIC EmbReal emb_diameter(EmbGeometry *geometry, EmbError *error);
@@ -1504,6 +1457,8 @@ EMB_PUBLIC int emb_readline(FILE* file, int8_t *line, int maxLength);
 
 EMB_PUBLIC void emb_swap(char *a, int i, int j);
 
+EMB_PUBLIC int8_t emb_read_i8(FILE* f);
+EMB_PUBLIC uint8_t emb_read_u8(FILE* f);
 EMB_PUBLIC int16_t emb_read_i16(FILE* f);
 EMB_PUBLIC uint16_t emb_read_u16(FILE* f);
 EMB_PUBLIC int32_t emb_read_i32(FILE* f);
